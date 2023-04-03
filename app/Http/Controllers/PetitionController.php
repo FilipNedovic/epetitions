@@ -6,16 +6,17 @@ use App\Http\Resources\PetitionResource;
 use App\Http\Resources\PetitionCollection;
 use App\Models\Petition;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class PetitionController extends Controller
 {
     /**
      * Display a listing of the resource.
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \App\Http\Resources\PetitionCollection
      */
     public function index()
     {
-        return new PetitionCollection(Petition::all());
+        return response()->json(new PetitionCollection(Petition::all()), Response::HTTP_OK);
     }
 
     /**
@@ -45,10 +46,21 @@ class PetitionController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Petition $petition
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Petition $petition)
     {
-        //
+        $petition->update($request->only([
+            'title',
+            'description',
+            'category',
+            'author',
+            'signees'
+        ]));
+
+        return new PetitionResource($petition);
     }
 
     /**
@@ -56,6 +68,8 @@ class PetitionController extends Controller
      */
     public function destroy(Petition $petition)
     {
-        //
+        $petition->delete();
+
+        return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 }
