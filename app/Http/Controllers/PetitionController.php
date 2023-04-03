@@ -20,10 +20,19 @@ class PetitionController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @return PetitionResource
      */
     public function store(Request $request)
     {
-        //
+        $petition = Petition::create($request->only([
+            'title',
+            'description',
+            'category',
+            'author',
+            'signees'
+        ]));
+
+        return new PetitionResource($petition);
     }
 
     /**
